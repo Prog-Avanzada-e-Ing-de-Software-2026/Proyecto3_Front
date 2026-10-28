@@ -24,6 +24,19 @@ Los números de sección entre paréntesis en esta lista refieren a `estructura.
 
 Es la referencia operativa para decidir dónde ubicar cada pieza. No autoriza crear carpetas vacías, refactorizar código existente ni ampliar el alcance de un cambio: eso sigue requiriendo su cambio de OpenSpec aprobado. Ante una discrepancia entre este archivo y la convención, aplicar la jerarquía de fuentes de `estructura.md` §9.1 y resolverla antes de implementar.
 
+### 1.2 Buenas prácticas de desarrollo (lectura obligatoria)
+
+Antes de implementar, leer también [`docs/agreements/buenas_practicas.md`](docs/agreements/buenas_practicas.md). Complementa `estructura.md` con los criterios de trabajo del equipo:
+
+- principios (KISS, YAGNI, DRY, SRP, separación de responsabilidades, bajo acoplamiento, abstracciones justificadas) y la regla de elegir la solución más simple que cumpla el requisito (`buenas_practicas.md` §1);
+- responsabilidades por carpeta y los flujos de consulta y escritura (`buenas_practicas.md` §2 y §3);
+- formularios, visibilidad por permisos y responsive (`buenas_practicas.md` §4);
+- pruebas por archivo, identificación de casos y qué reportar al cerrar un cambio (`buenas_practicas.md` §5);
+- commits, ramas y contenido de PR (`buenas_practicas.md` §6), con el detalle operativo de ramas en §10 de este documento;
+- checklist de entrega para agentes (`buenas_practicas.md` §7).
+
+Es una guía de criterio, no una autorización: no habilita crear carpetas, refactorizar ni ampliar el alcance de un cambio, y no autoriza commits, push, PR ni merge — eso lo rigen §9 y §10. Ante una discrepancia entre este archivo y los dos documentos de `docs/agreements/`, rige `AGENTS.md`; informarla y resolverla antes de implementar.
+
 ## 2. Comandos
 
 | Objetivo | Comando |
@@ -270,11 +283,13 @@ test(plans): cover duplicate exercise name
 
 ## 10. Git y revisión
 
-- Cada cambio de OpenSpec se implementa en una rama `change/<change-name>`; no commitear directamente sobre `main`.
+- **Estrategia de ramas: GitFlow** (`buenas_practicas.md` §6.1). `main` conserva las versiones estables, `develop` integra el desarrollo y cada trabajo nace y vuelve por PR: `feature/<nombre>` y `fix/<nombre>` desde `develop`, `hotfix/<nombre>` desde `main`. Cada cambio de OpenSpec se implementa en su rama correspondiente; no commitear directamente sobre `main` ni sobre `develop`.
+- **Excepción de configuración inicial:** mientras el proyecto siga en setup y solo exista `main`, los commits de documentación y configuración van directo a `main`. Al arrancar el primer cambio de desarrollo se crea `develop` y desde ahí rige GitFlow sin excepciones.
 - Antes de commitear: `yarn typecheck && yarn lint && yarn test`.
 - Revisar `git diff` completo antes de cada commit; no commitear archivos generados (`dist/`, `node_modules/`) ni secretos.
 - No usar `--no-verify` para saltear hooks.
 - El push, la creación de PR y el merge son decisiones del usuario.
+- Cuando el usuario pida una PR, el contenido sigue la plantilla de `buenas_practicas.md` §6.3.
 
 ## 11. CodeGraph
 
