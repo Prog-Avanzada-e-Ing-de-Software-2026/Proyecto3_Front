@@ -1,19 +1,37 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "eslint",
-    "typescript",
-    "react",
-    "jsx-a11y",
-    "import",
-    "vitest"
-  ],
+  "plugins": ["eslint", "typescript", "react", "jsx-a11y", "import", "vitest"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
   },
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/exhaustive-deps": "warn"
-  }
+    "react/exhaustive-deps": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/only-export-components": "warn",
+    "import/no-cycle": "error",
+    "import/no-duplicates": "warn",
+    "import/no-unassigned-import": [
+      "warn",
+      { "allow": ["**/*.css", "@testing-library/jest-dom/**"] }
+    ],
+    "typescript/no-explicit-any": "warn",
+    "max-lines": [
+      "warn",
+      { "max": 200, "skipBlankLines": true, "skipComments": true }
+    ],
+    "vitest/consistent-test-filename": ["warn", { "pattern": ".*\\.test\\.(ts|tsx)$" }],
+    "vitest/expect-expect": "warn",
+    "vitest/no-disabled-tests": "warn",
+    "jsx-a11y/label-has-associated-control": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["src/lib/api.ts"],
+      "rules": {
+        "import/no-named-as-default-member": "off"
+      }
+    }
+  ]
 }

@@ -139,8 +139,9 @@ Solo los cambios sin efecto en comportamiento, contratos, esquema o código (typ
 - **Estructura condicional, no preventiva:** `app/`, `permissions/` y las subcarpetas de `components/` se crean cuando la funcionalidad lo exige. `App.tsx` y `main.tsx` conservan hoy la composición de rutas y providers; extraer `app/routes/`, `app/providers/` o `lib/query-client.ts` es un cambio propio con su aprobación, no una limpieza. No abrir las subcarpetas de una feature que todavía no las necesita.
 
 - **Componentes:** presentacional vs. contenedor. El presentacional recibe props y no conoce la API; el contenedor usa los hooks de la capacidad. Sin componentes de más de ~150 líneas: si crece, se parte por responsabilidad.
-- **Nombres:** componentes y páginas en `PascalCase` (`PlanBuilderPage.tsx`), layouts en `PascalCase` + `Layout.tsx` (`StaffLayout.tsx`), hooks en `useCamelCase` (`usePlanes.ts`), esquemas con identificador `camelCase` + `Schema` (`planSchema`, `planFormSchema`) en archivo `<descriptivo>.schema.ts` (`plan.schema.ts`, `plan-form.schema.ts`), y archivos HTTP de feature `<capacidad>.service.ts` (`planes.service.ts`). Un archivo exporta un componente de React (regla `react/only-export-components` si se activa).
+- **Nombres:** componentes y páginas en `PascalCase` (`PlanBuilderPage.tsx`), layouts en `PascalCase` + `Layout.tsx` (`StaffLayout.tsx`), hooks en `useCamelCase` (`usePlanes.ts`), esquemas con identificador `camelCase` + `Schema` (`planSchema`, `planFormSchema`) en archivo `<descriptivo>.schema.ts` (`plan.schema.ts`, `plan-form.schema.ts`), y archivos HTTP de feature `<capacidad>.service.ts` (`planes.service.ts`). Un archivo exporta un componente de React (`react/only-export-components`, activa).
 - **Formato:** Prettier (`singleQuote`, `trailingComma: all`, plugin de Tailwind) y oxlint. No introducir reglas nuevas de lint sin justificarlo.
+- **Lint y lo que no cubre:** `.oxlintrc.json` hace cumplir lo automatizable de estos acuerdos — ciclos de imports, un solo componente exportado por archivo, tamaño de archivo, `any` explícito, sufijo de los tests y `label` asociado a su control. No cubre los límites entre features (`estructura.md` §6): con imports relativos esos siguen siendo revisión de código. No desactivar reglas sin justificarlo en el mismo cambio.
 - **Dependencias entre carpetas:** `app/` y las páginas componen, los hooks consumen el `api/<capacidad>.service.ts` de su feature y los `components/` compartidos no conocen ninguna capacidad. No importar internals de otra feature (`features/planes/...` → `features/alumnos/...`): si la integración es legítima, exponer una API pública mínima de la feature o mover la pieza a un lugar realmente compartido, y justificarlo en el `design.md`. Sin dependencias circulares, sin acoplar features a un layout y sin `index.ts` obligatorios.
 
 ## 5. Acceso a datos y estado del servidor
@@ -211,7 +212,7 @@ Todas las pantallas deben funcionar y leerse en móvil y en escritorio. La prior
 Verificado al inicializar el repositorio; no es una regresión de tu cambio:
 
 - `yarn typecheck` pasa.
-- `yarn lint` pasa con warnings de `react(react-in-jsx-scope)` en `src/App.tsx`. Es ruido de la config de oxlint con el JSX transform moderno de React 19: no "arreglarlo" importando `React`.
+- `yarn lint` pasa sin warnings: `.oxlintrc.json` desactiva `react/react-in-jsx-scope`, que el JSX transform de React 19 no necesita. Un warning nuevo es señal real, no ruido: no silenciarlo importando `React`.
 - `yarn test` falla hoy con `No test files found, exiting with code 1`. El primer cambio que agregue tests lo resuelve.
 - `yarn format:check` reporta archivos sin formatear. Se corrige con `yarn format` una sola vez, no dentro de un cambio ajeno.
 
