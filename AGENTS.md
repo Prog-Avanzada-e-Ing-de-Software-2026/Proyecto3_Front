@@ -39,21 +39,21 @@ Es una guía de criterio, no una autorización: no habilita crear carpetas, refa
 
 ## 2. Comandos
 
-| Objetivo | Comando |
-| --- | --- |
-| Instalar dependencias | `yarn install` |
-| Desarrollo con HMR | `yarn dev` |
-| Build de producción | `yarn build` |
-| Previsualizar el build | `yarn preview` |
-| Servir el build compilado | `yarn prod` |
-| Servir un build ya existente | `yarn prod:start` |
-| Typecheck | `yarn typecheck` |
-| Lint | `yarn lint` |
-| Formatear | `yarn format` |
-| Verificar formato | `yarn format:check` |
-| Tests | `yarn test` |
-| Tests en watch | `yarn test:watch` |
-| Cobertura | `yarn test:cov` |
+| Objetivo                     | Comando             |
+| ---------------------------- | ------------------- |
+| Instalar dependencias        | `yarn install`      |
+| Desarrollo con HMR           | `yarn dev`          |
+| Build de producción          | `yarn build`        |
+| Previsualizar el build       | `yarn preview`      |
+| Servir el build compilado    | `yarn prod`         |
+| Servir un build ya existente | `yarn prod:start`   |
+| Typecheck                    | `yarn typecheck`    |
+| Lint                         | `yarn lint`         |
+| Formatear                    | `yarn format`       |
+| Verificar formato            | `yarn format:check` |
+| Tests                        | `yarn test`         |
+| Tests en watch               | `yarn test:watch`   |
+| Cobertura                    | `yarn test:cov`     |
 
 - El entorno está fijado: Node 24 y Yarn 4.18.1 (`packageManager` + `engines`). No cambiar a npm, pnpm ni Bun.
 - `yarn dev` levanta Vite en el puerto 5173 con `strictPort`, y proxya `/api` hacia `http://localhost:3000` recortando el prefijo (`vite.config.ts`). El backend debe estar corriendo en ese puerto para trabajar contra datos reales.
@@ -65,16 +65,16 @@ Es una guía de criterio, no una autorización: no habilita crear carpetas, refa
 
 ### 3.1 Fases y gates
 
-| # | Fase | Comandos | Gate para avanzar |
-| --- | --- | --- | --- |
-| 0 | Explorar (solo lectura) | `openspec context --json`, `openspec list --specs`, `openspec show <capability> --type spec` | Requisitos existentes y decisiones abiertas identificados |
-| 1 | Proponer | `openspec new change <kebab-case>` | Cambio creado por el CLI, nunca a mano |
-| 2 | Artefactos | `openspec status --change <name> --json`, `openspec instructions <artifact> --change <name> --json` | `proposal.md`, `specs/**/spec.md`, `design.md` (cuando aplique) y `tasks.md` completos |
-| 3 | Validar planificación | `openspec validate <name> --strict` | Sale con código 0 |
-| 4 | Aprobación humana | — | El usuario pide explícitamente implementar |
-| 5 | Implementar | `/opsx-apply <name>` o skill `openspec-apply-change` | Todas las tareas `[x]` y suites en verde |
-| 6 | Verificar | `openspec validate <name> --strict` + suites | Cada escenario demostrado con evidencia |
-| 7 | Archivar | `openspec archive <name>` | Tareas completas, validación en verde y aprobación del usuario |
+| #   | Fase                    | Comandos                                                                                            | Gate para avanzar                                                                      |
+| --- | ----------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 0   | Explorar (solo lectura) | `openspec context --json`, `openspec list --specs`, `openspec show <capability> --type spec`        | Requisitos existentes y decisiones abiertas identificados                              |
+| 1   | Proponer                | `openspec new change <kebab-case>`                                                                  | Cambio creado por el CLI, nunca a mano                                                 |
+| 2   | Artefactos              | `openspec status --change <name> --json`, `openspec instructions <artifact> --change <name> --json` | `proposal.md`, `specs/**/spec.md`, `design.md` (cuando aplique) y `tasks.md` completos |
+| 3   | Validar planificación   | `openspec validate <name> --strict`                                                                 | Sale con código 0                                                                      |
+| 4   | Aprobación humana       | —                                                                                                   | El usuario pide explícitamente implementar                                             |
+| 5   | Implementar             | `/opsx-apply <name>` o skill `openspec-apply-change`                                                | Todas las tareas `[x]` y suites en verde                                               |
+| 6   | Verificar               | `openspec validate <name> --strict` + suites                                                        | Cada escenario demostrado con evidencia                                                |
+| 7   | Archivar                | `openspec archive <name>`                                                                           | Tareas completas, validación en verde y aprobación del usuario                         |
 
 Comandos de workflow instalados en `.opencode/commands/`: `opsx-propose`, `opsx-explore`, `opsx-apply`, `opsx-update`, `opsx-sync`, `opsx-archive`.
 
@@ -192,7 +192,7 @@ Esto es **experiencia de usuario, no seguridad**: la autorización real la valid
 
 ### 7.1 Diseño responsive por experiencia
 
-Todas las pantallas deben funcionar y leerse en móvil y en escritorio. La prioridad de diseño depende del perfil: **alumno** *mobile-first* (navegación, consulta de planes, registro de entrenamientos); **profesor y administrador** con prioridad escritorio (formularios, tablas, gestión y seguimiento), manteniendo una versión utilizable en móvil; **pantallas compartidas** cuidadas en ambas experiencias. Al implementar o revisar una pantalla, comprobar sus estados e interacciones en ambos tamaños: no alcanza con ajustar el ancho de los contenedores.
+Todas las pantallas deben funcionar y leerse en móvil y en escritorio. La prioridad de diseño depende del perfil: **alumno** _mobile-first_ (navegación, consulta de planes, registro de entrenamientos); **profesor y administrador** con prioridad escritorio (formularios, tablas, gestión y seguimiento), manteniendo una versión utilizable en móvil; **pantallas compartidas** cuidadas en ambas experiencias. Al implementar o revisar una pantalla, comprobar sus estados e interacciones en ambos tamaños: no alcanza con ajustar el ancho de los contenedores.
 
 ## 8. Testing y verificación
 
@@ -214,7 +214,7 @@ Verificado al inicializar el repositorio; no es una regresión de tu cambio:
 - `yarn typecheck` pasa.
 - `yarn lint` pasa sin warnings: `.oxlintrc.json` desactiva `react/react-in-jsx-scope`, que el JSX transform de React 19 no necesita. Un warning nuevo es señal real, no ruido: no silenciarlo importando `React`.
 - `yarn test` falla hoy con `No test files found, exiting with code 1`. El primer cambio que agregue tests lo resuelve.
-- `yarn format:check` reporta archivos sin formatear. Se corrige con `yarn format` una sola vez, no dentro de un cambio ajeno.
+- `yarn format:check` pasa: cubre `src`, `vite.config.ts`, `docs/**/*.md` y los `.md` de la raíz. Un archivo sin formatear se corrige con `yarn format`, no dentro de un cambio ajeno.
 
 ## 9. Conventional Commits
 
@@ -236,19 +236,19 @@ Todos los commits siguen [Conventional Commits](https://www.conventionalcommits.
 
 ### 9.2 Tipos permitidos
 
-| Tipo | Uso |
-| --- | --- |
-| `feat` | Nueva funcionalidad |
-| `fix` | Corrección de un defecto |
-| `docs` | Documentación, incluidos artefactos OpenSpec |
-| `style` | Formato sin cambio de comportamiento |
-| `refactor` | Cambio interno sin alterar comportamiento |
-| `perf` | Mejora de rendimiento |
-| `test` | Tests nuevos o corregidos |
-| `build` | Build, dependencias o herramientas |
-| `ci` | Configuración de integración continua |
-| `chore` | Tareas de mantenimiento |
-| `revert` | Reversión de un commit anterior |
+| Tipo       | Uso                                          |
+| ---------- | -------------------------------------------- |
+| `feat`     | Nueva funcionalidad                          |
+| `fix`      | Corrección de un defecto                     |
+| `docs`     | Documentación, incluidos artefactos OpenSpec |
+| `style`    | Formato sin cambio de comportamiento         |
+| `refactor` | Cambio interno sin alterar comportamiento    |
+| `perf`     | Mejora de rendimiento                        |
+| `test`     | Tests nuevos o corregidos                    |
+| `build`    | Build, dependencias o herramientas           |
+| `ci`       | Configuración de integración continua        |
+| `chore`    | Tareas de mantenimiento                      |
+| `revert`   | Reversión de un commit anterior              |
 
 ### 9.3 Scopes
 

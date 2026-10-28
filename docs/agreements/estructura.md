@@ -93,20 +93,20 @@ Los nombres son ejemplos, no funcionalidades implementadas ni contratos confirma
 
 ## 3. Responsabilidades por carpeta
 
-| Ubicación | Sí debe contener | No debe contener |
-| --- | --- | --- |
-| `app/` | Composición global, rutas, providers, layouts, guards y estructura de navegación | CRUD, peticiones específicas de una capacidad, lógica de pantallas concretas |
-| `app/layouts/` | Header, sidebar, navegación inferior, contenedor `<Outlet />`, estructura reutilizable | Consultas HTTP, lógica de planes o entrenamientos |
-| `app/guards/` | Redirecciones y control de acceso visual a rutas según el estado conocido | Reglas de autorización definitivas ni decisiones que correspondan al backend |
-| `features/<capacidad>/pages/` | Pantallas conectadas al router; coordinación de componentes y hooks | Axios/fetch directo, lógica de persistencia |
-| `features/<capacidad>/components/` | Componentes específicos de la feature, principalmente de presentación | Acceso HTTP directo; dependencias con features ajenas sin contrato claro |
-| `features/<capacidad>/hooks/` | Hooks propios, TanStack `useQuery`/`useMutation`, claves de caché, estados y acciones para la UI | Llamadas Axios sueltas o reglas de negocio autoritativas |
-| `features/<capacidad>/api/` | `*.service.ts`, construcción de solicitudes HTTP, mapeo/normalización del contrato de API | JSX, hooks React, `useQuery`, navegación, mensajes visuales, estado de formularios |
-| `features/<capacidad>/schemas/` | Zod para entradas/formularios y validación o adaptación de datos cuando corresponda | Requests HTTP, componentes |
-| `features/<capacidad>/types.ts` | Tipos e interfaces de datos de la feature (request/response/modelos UI) | Implementaciones HTTP o lógica de UI |
-| `components/` | UI genérica reutilizable entre features | Reglas y dependencias específicas de una capacidad |
-| `lib/` | Instancia Axios global y utilidades de infraestructura frontend compartidas | Un `planes.service.ts` o servicios propios de otras capacidades |
-| `permissions/` | Helpers y componentes reutilizables para visibilidad/permisos en UI | Autorización real del servidor o lógica específica sin reutilización |
+| Ubicación                          | Sí debe contener                                                                                 | No debe contener                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `app/`                             | Composición global, rutas, providers, layouts, guards y estructura de navegación                 | CRUD, peticiones específicas de una capacidad, lógica de pantallas concretas       |
+| `app/layouts/`                     | Header, sidebar, navegación inferior, contenedor `<Outlet />`, estructura reutilizable           | Consultas HTTP, lógica de planes o entrenamientos                                  |
+| `app/guards/`                      | Redirecciones y control de acceso visual a rutas según el estado conocido                        | Reglas de autorización definitivas ni decisiones que correspondan al backend       |
+| `features/<capacidad>/pages/`      | Pantallas conectadas al router; coordinación de componentes y hooks                              | Axios/fetch directo, lógica de persistencia                                        |
+| `features/<capacidad>/components/` | Componentes específicos de la feature, principalmente de presentación                            | Acceso HTTP directo; dependencias con features ajenas sin contrato claro           |
+| `features/<capacidad>/hooks/`      | Hooks propios, TanStack `useQuery`/`useMutation`, claves de caché, estados y acciones para la UI | Llamadas Axios sueltas o reglas de negocio autoritativas                           |
+| `features/<capacidad>/api/`        | `*.service.ts`, construcción de solicitudes HTTP, mapeo/normalización del contrato de API        | JSX, hooks React, `useQuery`, navegación, mensajes visuales, estado de formularios |
+| `features/<capacidad>/schemas/`    | Zod para entradas/formularios y validación o adaptación de datos cuando corresponda              | Requests HTTP, componentes                                                         |
+| `features/<capacidad>/types.ts`    | Tipos e interfaces de datos de la feature (request/response/modelos UI)                          | Implementaciones HTTP o lógica de UI                                               |
+| `components/`                      | UI genérica reutilizable entre features                                                          | Reglas y dependencias específicas de una capacidad                                 |
+| `lib/`                             | Instancia Axios global y utilidades de infraestructura frontend compartidas                      | Un `planes.service.ts` o servicios propios de otras capacidades                    |
+| `permissions/`                     | Helpers y componentes reutilizables para visibilidad/permisos en UI                              | Autorización real del servidor o lógica específica sin reutilización               |
 
 ### 3.1 Regla explícita para `*.service.ts`
 
@@ -121,7 +121,7 @@ Los nombres son ejemplos, no funcionalidades implementadas ni contratos confirma
 - No muestra alertas, no navega y no administra el estado del formulario.
 - Devuelve valores y errores tipados de acuerdo con el contrato real. No inventar endpoints ni formas de respuesta.
 
-**Ejemplo ilustrativo** (la ruta y los DTO son supuestos, *no* un contrato confirmado):
+**Ejemplo ilustrativo** (la ruta y los DTO son supuestos, _no_ un contrato confirmado):
 
 ```ts
 // features/planes/api/planes.service.ts
@@ -204,7 +204,7 @@ Cuando se necesite reutilizar las comprobaciones de visibilidad, podrán central
 
 **Todas las pantallas deberán ser responsive** y conservar su funcionalidad y legibilidad tanto en dispositivos móviles como en pantallas de escritorio. El diseño priorizará la experiencia más habitual para cada perfil, sin excluir los demás tamaños de pantalla:
 
-- **Alumno:** prioridad *mobile-first*, especialmente en navegación, consulta de planes y registro de entrenamientos.
+- **Alumno:** prioridad _mobile-first_, especialmente en navegación, consulta de planes y registro de entrenamientos.
 - **Profesor y administrador:** prioridad en la experiencia de escritorio, especialmente en formularios, tablas, gestión y seguimiento, manteniendo una versión utilizable en dispositivos móviles.
 - **Pantallas compartidas entre perfiles:** especial cuidado en ambas experiencias, sin sacrificar operaciones, claridad visual ni acceso a la información según el tamaño de pantalla.
 
@@ -227,23 +227,23 @@ app/layouts        components/*             features/*/api/*.service.ts
 - `app/` compone rutas y componentes **públicos** de las features; no necesita conocer sus detalles HTTP.
 - Una feature puede reutilizar `components/` y `lib/` sin convertirlos en dependientes del negocio.
 - Evitar imports profundos entre features (`features/planes/...` importando archivos internos de `features/alumnos/...`). Si existe integración legítima, exponer una API pública mínima de la feature o mover la pieza a un lugar compartido con responsabilidad real; justificar en el diseño.
-- No crear `index.ts` en todas las carpetas por obligación. Los *barrel exports* se agregan cuando simplifican un límite público.
+- No crear `index.ts` en todas las carpetas por obligación. Los _barrel exports_ se agregan cuando simplifican un límite público.
 - No introducir dependencias circulares ni acoplar features a layouts particulares.
 
 ---
 
 ## 7. Nomenclatura
 
-| Tipo | Convención | Ejemplo |
-| --- | --- | --- |
-| Feature | kebab-case o término ya acordado en el repositorio | `planes/`, `categorias-ejercicio/` |
-| Página | PascalCase + `Page.tsx` | `PlanesPage.tsx` |
-| Layout | PascalCase + `Layout.tsx` | `StaffLayout.tsx` |
-| Componente | PascalCase | `PlanCard.tsx` |
-| Hook | `use` + PascalCase | `usePlanes.ts`, `useCreatePlan.ts` |
-| Servicio HTTP por feature | **`<capacidad>.service.ts`** | **`planes.service.ts`** |
-| Schema | nombre descriptivo + `.schema.ts` | `plan.schema.ts` |
-| Tipos | `types.ts` o archivo de tipos concreto si crecen | `types.ts` |
+| Tipo                          | Convención                                                  | Ejemplo                                 |
+| ----------------------------- | ----------------------------------------------------------- | --------------------------------------- |
+| Feature                       | kebab-case o término ya acordado en el repositorio          | `planes/`, `categorias-ejercicio/`      |
+| Página                        | PascalCase + `Page.tsx`                                     | `PlanesPage.tsx`                        |
+| Layout                        | PascalCase + `Layout.tsx`                                   | `StaffLayout.tsx`                       |
+| Componente                    | PascalCase                                                  | `PlanCard.tsx`                          |
+| Hook                          | `use` + PascalCase                                          | `usePlanes.ts`, `useCreatePlan.ts`      |
+| Servicio HTTP por feature     | **`<capacidad>.service.ts`**                                | **`planes.service.ts`**                 |
+| Schema                        | nombre descriptivo + `.schema.ts`                           | `plan.schema.ts`                        |
+| Tipos                         | `types.ts` o archivo de tipos concreto si crecen            | `types.ts`                              |
 | Prueba unitaria/de componente | junto al archivo probado, mismo nombre base + `.test.ts(x)` | `PlanForm.test.tsx` para `PlanForm.tsx` |
 
 Los ejemplos usan terminología del proyecto. Mantener los términos de dominio y nombres ya fijados por el equipo; **no renombrar todo el repositorio para adecuarlo a un ejemplo**. En imports TypeScript de este proyecto ESM con bundler, seguir la convención de `AGENTS.md`: imports relativos sin `.js`.

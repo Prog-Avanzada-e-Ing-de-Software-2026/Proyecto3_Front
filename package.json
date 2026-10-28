@@ -11,8 +11,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "typecheck": "tsc -b --pretty false",
-    "format": "prettier --write src vite.config.ts",
-    "format:check": "prettier --check src vite.config.ts",
+    "format": "prettier --write src vite.config.ts \"docs/**/*.md\" \"*.md\"",
+    "format:check": "prettier --check src vite.config.ts \"docs/**/*.md\" \"*.md\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage"

@@ -2,7 +2,7 @@
 
 > **Destinatarios:** equipo de desarrollo y agentes de IA que trabajen en `Proyecto3_Front`.
 >
-> **Alcance:** aplicación React + TypeScript + Vite. Esta guía **adapta** los apartados generales, frontend y Git de *Buenas practicas final.pdf* y los complementa, cuando resulta útil, con la *Convención de estructura y responsabilidades — Proyecto3_Front*.
+> **Alcance:** aplicación React + TypeScript + Vite. Esta guía **adapta** los apartados generales, frontend y Git de _Buenas practicas final.pdf_ y los complementa, cuando resulta útil, con la _Convención de estructura y responsabilidades — Proyecto3_Front_.
 >
 > **Precedencia durante la implementación:** comprobar las especificaciones y decisiones aprobadas, `AGENTS.md` del repositorio y el código real antes de realizar cambios. Esta guía no modifica por sí sola esos archivos ni autoriza commits, push, PR o merges. Si aparece una discrepancia, **informarla**, no elegir una regla silenciosamente.
 
@@ -24,7 +24,7 @@ La regla práctica es **elegir la solución más simple que cumpla el requisito 
 
 ## 2. Organización del proyecto y responsabilidades
 
-Adoptar una organización **por funcionalidades (*feature-first*)**, manteniendo lo específico dentro de cada feature. El siguiente árbol es **referencial**, no una instrucción para crear carpetas vacías:
+Adoptar una organización **por funcionalidades (_feature-first_)**, manteniendo lo específico dentro de cada feature. El siguiente árbol es **referencial**, no una instrucción para crear carpetas vacías:
 
 ```text
 src/
@@ -45,15 +45,15 @@ src/
 └── test/                      # Configuración y utilidades comunes de prueba
 ```
 
-| Responsabilidad | Ubicación / criterio | Evitar |
-| --- | --- | --- |
-| Composición y navegación | `app/`, layouts y rutas | lógica específica de una feature en el layout |
-| Pantallas | `features/*/pages/` | peticiones HTTP directas |
-| Componentes visuales | `features/*/components/` o `components/` si son compartidos | reglas del servidor o acceso directo a Axios |
-| Coordinación de estado remoto | `features/*/hooks/` con TanStack Query | replicar resultados del servidor sin necesidad en Context o `useState` |
-| Acceso HTTP por feature | `features/*/api/*.service.ts` | crear clientes Axios diferentes sin justificación |
-| Validación de formularios | `features/*/schemas/` con Zod | tratar la validación frontend como seguridad definitiva |
-| Contratos y modelos de interfaz | `types.ts` y tipos específicos cuando crezcan | confundir DTO de API con entidad de dominio del backend |
+| Responsabilidad                 | Ubicación / criterio                                        | Evitar                                                                 |
+| ------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Composición y navegación        | `app/`, layouts y rutas                                     | lógica específica de una feature en el layout                          |
+| Pantallas                       | `features/*/pages/`                                         | peticiones HTTP directas                                               |
+| Componentes visuales            | `features/*/components/` o `components/` si son compartidos | reglas del servidor o acceso directo a Axios                           |
+| Coordinación de estado remoto   | `features/*/hooks/` con TanStack Query                      | replicar resultados del servidor sin necesidad en Context o `useState` |
+| Acceso HTTP por feature         | `features/*/api/*.service.ts`                               | crear clientes Axios diferentes sin justificación                      |
+| Validación de formularios       | `features/*/schemas/` con Zod                               | tratar la validación frontend como seguridad definitiva                |
+| Contratos y modelos de interfaz | `types.ts` y tipos específicos cuando crezcan               | confundir DTO de API con entidad de dominio del backend                |
 
 **Flujo preferido de consulta:** `Page → Hook (useQuery) → Feature Service (*.service.ts) → lib/api.ts → API`.
 
@@ -114,17 +114,17 @@ Antes de cerrar un cambio, ejecutar los comandos disponibles y aprobados del rep
 
 ## 6. Git y colaboración
 
-> Esta sección recoge el flujo de ramas **adoptado** por el repositorio, adaptado de *Buenas practicas final.pdf*. El detalle operativo está en `AGENTS.md` §10.
+> Esta sección recoge el flujo de ramas **adoptado** por el repositorio, adaptado de _Buenas practicas final.pdf_. El detalle operativo está en `AGENTS.md` §10.
 
 ### 6.1. GitFlow adaptado
 
-| Rama | Propósito y destino |
-| --- | --- |
-| `main` | Versiones estables o liberadas; sin cambios directos fuera del proceso de revisión. |
-| `develop` | Integración habitual del desarrollo. |
-| `feature/<nombre>` | Nueva funcionalidad; nace de `develop` y vuelve a ella mediante PR. |
-| `fix/<nombre>` | Corrección durante desarrollo; nace de `develop` y vuelve a ella mediante PR. |
-| `hotfix/<nombre>` | Incidencia urgente sobre versión estable; nace de `main` y se integra a `main` y `develop`. |
+| Rama               | Propósito y destino                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| `main`             | Versiones estables o liberadas; sin cambios directos fuera del proceso de revisión.         |
+| `develop`          | Integración habitual del desarrollo.                                                        |
+| `feature/<nombre>` | Nueva funcionalidad; nace de `develop` y vuelve a ella mediante PR.                         |
+| `fix/<nombre>`     | Corrección durante desarrollo; nace de `develop` y vuelve a ella mediante PR.               |
+| `hotfix/<nombre>`  | Incidencia urgente sobre versión estable; nace de `main` y se integra a `main` y `develop`. |
 
 Utilizar `hotfix/*` solo cuando se justifique. Mantener ramas enfocadas en cambios concretos y evitar commits directos sobre ramas protegidas.
 
@@ -148,19 +148,19 @@ Los commits se redactan **en inglés**, con verbos en **imperativo** y el format
 - **`footer`:** referencias a tareas o OpenSpec cuando corresponda. Para un cambio implementado mediante OpenSpec: `Refs: openspec/changes/<change-name>`.
 - **Cambios incompatibles:** marcar `!` y añadir el footer `BREAKING CHANGE:` con la explicación.
 
-| Tipo | Uso |
-| --- | --- |
-| `feat` | Nueva funcionalidad |
-| `fix` | Corrección de defectos |
-| `docs` | Documentación |
-| `style` | Solo formato |
-| `refactor` | Reestructuración sin cambio funcional |
-| `perf` | Rendimiento |
-| `test` | Pruebas |
-| `build` | Compilación, herramientas o dependencias |
-| `ci` | Integración continua |
-| `chore` | Mantenimiento |
-| `revert` | Reversión de commits |
+| Tipo       | Uso                                      |
+| ---------- | ---------------------------------------- |
+| `feat`     | Nueva funcionalidad                      |
+| `fix`      | Corrección de defectos                   |
+| `docs`     | Documentación                            |
+| `style`    | Solo formato                             |
+| `refactor` | Reestructuración sin cambio funcional    |
+| `perf`     | Rendimiento                              |
+| `test`     | Pruebas                                  |
+| `build`    | Compilación, herramientas o dependencias |
+| `ci`       | Integración continua                     |
+| `chore`    | Mantenimiento                            |
+| `revert`   | Reversión de commits                     |
 
 Ejemplos:
 
@@ -178,18 +178,23 @@ Un PR debe permitir conocer **qué se cambió, por qué y cómo se verificó**, 
 
 ```md
 ## Objetivo y contexto
+
 <!-- Problema, necesidad, tarea, historia o cambio OpenSpec -->
 
 ## Resumen de cambios
+
 <!-- Qué se modificó y qué queda fuera del alcance -->
 
 ## Validación y pruebas
+
 <!-- Comandos y resultados reales; lo no ejecutado y su motivo -->
 
 ## Impacto y consideraciones
+
 <!-- Rutas, contratos API, permisos, configuración, compatibilidad o riesgos; "No aplica" si corresponde -->
 
 ## Evidencias
+
 <!-- Capturas/grabaciones de UI cuando ayuden; enlaces de referencia -->
 ```
 
