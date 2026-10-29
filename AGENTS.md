@@ -6,7 +6,7 @@ Guía operativa para agentes de IA en este repositorio. La documentación y los 
 
 Frontend de una aplicación de gestión de gimnasio: los profesores arman planes de entrenamiento y los alumnos registran sus entrenamientos. Está construido con React 19, TypeScript 6, Vite 8, React Router 8, TanStack Query 5, react-hook-form 7 + Zod 4 y Tailwind CSS 4, y se prueba con Vitest 5 y Testing Library sobre Yarn 4.18.1 y Node 24.
 
-El dominio no se define acá: la fuente de verdad son los documentos del backend, en el repositorio oficial `Prog-Avanzada-e-Ing-de-Software-2026/Proyecto3_Back` (`docs/preliminar/`) y en los contratos aprobados del proyecto. Este frontend los consume; cuando una regla de negocio no está escrita, es una decisión abierta y no se inventa.
+El dominio no se define acá: la fuente de verdad son los documentos del backend, en el repositorio oficial `Prog-Avanzada-e-Ing-de-Software-2026/Proyecto3_Back` (`docs/dominio/`) y en los contratos aprobados del proyecto. Este frontend los consume; cuando una regla de negocio no está escrita, es una decisión abierta y no se inventa.
 
 Mantener el **lenguaje ubicuo** del dominio: no traducir ni renombrar sus términos en el código sin justificación.
 

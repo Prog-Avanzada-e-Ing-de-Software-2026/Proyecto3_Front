@@ -8,7 +8,7 @@ context: |
   Dominio: un único bounded context, "Entrenamiento". Los profesores arman planes
   de entrenamiento y los alumnos registran sus entrenamientos. La fuente de verdad
   del dominio, las reglas de negocio y los contratos de la API viven en el
-  repositorio del backend (../proyecto3_back, docs/preliminar/); este repositorio
+  repositorio del backend (../proyecto3_back, docs/dominio/); este repositorio
   los consume, no los define.
 
   Idioma: español para la prosa; encabezados estructurales y palabras clave
