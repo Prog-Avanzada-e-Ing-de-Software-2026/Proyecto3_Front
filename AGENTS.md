@@ -6,7 +6,7 @@ Guía operativa para agentes de IA en este repositorio. La documentación y los 
 
 Frontend de una aplicación de gestión de gimnasio: los profesores arman planes de entrenamiento y los alumnos registran sus entrenamientos. Está construido con React 19, TypeScript 6, Vite 8, React Router 8, TanStack Query 5, react-hook-form 7 + Zod 4 y Tailwind CSS 4, y se prueba con Vitest 5 y Testing Library sobre Yarn 4.18.1 y Node 24.
 
-El dominio no se define acá: la fuente de verdad son los documentos del backend, en el repositorio hermano `../proyecto3_back` (`docs/preliminar/`). Este frontend consume sus contratos; cuando una regla de negocio no está escrita, es una decisión abierta y no se inventa.
+El dominio no se define acá: la fuente de verdad son los documentos del backend, en el repositorio oficial `Prog-Avanzada-e-Ing-de-Software-2026/Proyecto3_Back` (`docs/preliminar/`) y en los contratos aprobados del proyecto. Este frontend los consume; cuando una regla de negocio no está escrita, es una decisión abierta y no se inventa.
 
 Mantener el **lenguaje ubicuo** del dominio: no traducir ni renombrar sus términos en el código sin justificación.
 
@@ -205,7 +205,9 @@ Todas las pantallas deben funcionar y leerse en móvil y en escritorio. La prior
 - HTTP: mockear en el borde con `vi.mock('./lib/api')` o `vi.spyOn(api, 'get')`. No levantar un servidor falso para un test unitario.
 - Todo cambio de comportamiento sigue test-first: primero un test que falla (RED), luego la implementación (GREEN), luego refactor. Cada test verifica todos los efectos observables de la regla.
 - **Antes de declarar terminada una tarea:** `yarn typecheck && yarn lint && yarn test`. Un cambio de estilos o de markup significativo suma `yarn format:check`.
+- **Ausencia inicial de tests ≠ fallo.** Mientras el repositorio no tenga archivos de prueba, `yarn test` termina con `No test files found, exiting with code 1`. Ese resultado se informa como ausencia inicial de tests, no como un fallo real; cuando la herramienta lo permita, `yarn test --passWithNoTests` permite distinguirlo en la salida. La excepción aplica solo a un repositorio sin tests: en cuanto existe el primer archivo de prueba, o cuando la funcionalidad implementada debía traerlos, el resultado se trata como cualquier otra verificación. Nunca habilita a omitir, desactivar, saltear ni posponer las pruebas de una funcionalidad implementada.
 - No desactivar ni saltear tests para "dejar todo en verde". Si un test falla por una causa preexistente, documentarlo con evidencia.
+- Toda verificación se ejecuta y se reporta con su resultado observado: no se afirma un resultado que no se ejecutó ni se declara "en verde" una suite que no llegó a correr.
 
 ### 8.1 Estado conocido del baseline
 
@@ -213,7 +215,7 @@ Verificado al inicializar el repositorio; no es una regresión de tu cambio:
 
 - `yarn typecheck` pasa.
 - `yarn lint` pasa sin warnings: `.oxlintrc.json` desactiva `react/react-in-jsx-scope`, que el JSX transform de React 19 no necesita. Un warning nuevo es señal real, no ruido: no silenciarlo importando `React`.
-- `yarn test` falla hoy con `No test files found, exiting with code 1`. El primer cambio que agregue tests lo resuelve.
+- `yarn test` sale con código 1 y `No test files found, exiting with code 1` porque todavía no existen archivos de prueba. Es la ausencia inicial de tests descrita en §8, no una regresión ni un fallo de una funcionalidad: se reporta así y no se "arregla" creando tests vacíos. El primer cambio que agregue tests lo resuelve, y desde ese momento la suite debe ejecutarse y reportarse como cualquier otra verificación.
 - `yarn format:check` pasa: cubre `src`, `vite.config.ts`, `docs/**/*.md` y los `.md` de la raíz. Un archivo sin formatear se corrige con `yarn format`, no dentro de un cambio ajeno.
 
 ## 9. Conventional Commits
@@ -286,7 +288,7 @@ test(plans): cover duplicate exercise name
 
 - **Estrategia de ramas: GitFlow** (`buenas_practicas.md` §6.1). `main` conserva las versiones estables, `develop` integra el desarrollo y cada trabajo nace y vuelve por PR: `feature/<nombre>` y `fix/<nombre>` desde `develop`, `hotfix/<nombre>` desde `main`. Cada cambio de OpenSpec se implementa en su rama correspondiente; no commitear directamente sobre `main` ni sobre `develop`.
 - **Excepción de configuración inicial:** mientras el proyecto siga en setup y solo exista `main`, los commits de documentación y configuración van directo a `main`. Al arrancar el primer cambio de desarrollo se crea `develop` y desde ahí rige GitFlow sin excepciones.
-- Antes de commitear: `yarn typecheck && yarn lint && yarn test`.
+- Antes de commitear: `yarn typecheck && yarn lint && yarn test`, ejecutando cada una y reportando su resultado. Mientras no existan archivos de prueba, `yarn test` termina por ausencia inicial de tests (§8.1): eso se informa como tal y no se confunde con un fallo real, pero la excepción no autoriza a commitear funcionalidades implementadas sin sus pruebas.
 - Revisar `git diff` completo antes de cada commit; no commitear archivos generados (`dist/`, `node_modules/`) ni secretos.
 - No usar `--no-verify` para saltear hooks.
 - El push, la creación de PR y el merge son decisiones del usuario.
@@ -294,10 +296,11 @@ test(plans): cover duplicate exercise name
 
 ## 11. CodeGraph
 
-El proyecto tiene un índice de CodeGraph en `.codegraph/` (datos locales, no se commitean).
+CodeGraph es una herramienta **opcional**: su uso depende de que esté disponible en el entorno de trabajo y de que exista un índice válido en el worktree. No asumir que todos los desarrolladores o agentes la tienen instalada, y no instalarla, inicializarla ni regenerar su índice sin pedido explícito.
 
-- Para preguntas estructurales (arquitectura, flujos, impacto de un cambio, referencias de componentes), usar `codegraph_explore` o `codegraph explore` antes de búsquedas amplias con `grep`/`find`.
-- Después de editar código, ejecutar `codegraph sync -q .` antes de confiar en consultas del CLI.
+- **Con CodeGraph disponible e índice válido** en `.codegraph/` (datos locales, no se commitean): usarlo para preguntas estructurales (arquitectura, flujos, impacto de un cambio, referencias de componentes) con `codegraph_explore` o `codegraph explore` antes de búsquedas amplias con `grep`/`find`. Confirmar el índice con `codegraph status` antes de confiar en sus resultados.
+- **Sin CodeGraph disponible o sin índice válido:** continuar con las herramientas del entorno (`grep`/`find`, lectura de archivos) e informarlo brevemente. La ausencia de la herramienta no bloquea el trabajo ni obliga a configurarla.
+- Después de editar código, si se usa CodeGraph, ejecutar `codegraph sync -q .` antes de confiar en consultas del CLI.
 - Cada worktree necesita su propio índice; nunca copiar ni symlinkear `.codegraph/`.
 
 ## 12. Seguridad
