@@ -10,6 +10,16 @@ El dominio no se define acá: la fuente de verdad son los documentos del backend
 
 Mantener el **lenguaje ubicuo** del dominio: no traducir ni renombrar sus términos en el código sin justificación.
 
+**Documentación de referencia.** Qué resuelve cada documento del repositorio:
+
+| Documento                                                                    | Qué resuelve                                                        |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [`README.md`](README.md)                                                     | Puesta en marcha, comandos, estructura actual y despliegue          |
+| [`docs/agreements/estructura.md`](docs/agreements/estructura.md)             | Dónde vive cada responsabilidad y qué dependencias están permitidas |
+| [`docs/agreements/buenas_practicas.md`](docs/agreements/buenas_practicas.md) | Criterios de trabajo, pruebas, ramas y contenido de PR              |
+| [`openspec/config.yaml`](openspec/config.yaml)                               | Reglas de formato y contenido de cada artefacto de OpenSpec         |
+| [`openspec/`](openspec)                                                      | Especificaciones vigentes y cambios propuestos                      |
+
 ### 1.1 Convención de estructura (lectura obligatoria)
 
 Antes de proponer o implementar cualquier pedido, leer [`docs/agreements/estructura.md`](docs/agreements/estructura.md). Define cómo estructurar el pedido y dónde vive cada responsabilidad:
@@ -56,8 +66,17 @@ Es una guía de criterio, no una autorización: no habilita crear carpetas, refa
 | Cobertura                    | `yarn test:cov`     |
 
 - El entorno está fijado: Node 24 y Yarn 4.18.1 (`packageManager` + `engines`). No cambiar a npm, pnpm ni Bun.
-- `yarn dev` levanta Vite en el puerto 5173 con `strictPort`, y proxya `/api` hacia `http://localhost:3000` recortando el prefijo (`vite.config.ts`). El backend debe estar corriendo en ese puerto para trabajar contra datos reales.
+- `yarn dev` levanta Vite en el puerto 5173 con `strictPort`, y proxya `/api` hacia `http://localhost:3000` conservando el prefijo (`vite.config.ts`). El backend debe estar corriendo en ese puerto para trabajar contra datos reales.
 - `yarn build` es `tsc -b` + `vite build`: un error de tipos rompe el build.
+
+### 2.1 Entorno y API
+
+- `src/lib/api.ts` es la instancia Axios compartida: toma `baseURL` de `VITE_API_URL` y cae en `/api` cuando la variable no está definida.
+- La plantilla `env.example` se copia a `.env` (`cp env.example .env`) y documenta las variables. `.env` está ignorado por git: nunca se commitea.
+- El proxy de `yarn dev` reenvía `/api/*` a `http://localhost:3000/api/*` **conservando el prefijo**. Ese proxy vive solo en `vite.config.ts`: **no viaja al build de producción**.
+- Las variables `VITE_*` se incrustan en el bundle **en tiempo de build**: después de cambiarlas hay que volver a compilar, y nunca contienen secretos (ver §12). En Heroku son config vars del build: cambiarlas reinicia la dyno pero no reconstruye el slug.
+- `VITE_API_URL` va sin barra final pero **incluye el prefijo `/api`** (`https://host/api`); el service agrega solo la ruta (`/alumnos`). El backend tiene que exponer sus rutas bajo `/api`.
+- Front y backend en dominios distintos exigen CORS en el backend. Hoy `src/main.ts` del backend no llama a `enableCors()`, así que en desarrollo se usa el proxy.
 
 ## 3. Flujo SDD obligatorio (OpenSpec)
 
@@ -97,6 +116,8 @@ Comandos de workflow instalados en `.opencode/commands/`: `opsx-propose`, `opsx-
 ### 3.3 Capacidades (capability paths)
 
 Usar nombres en kebab-case, descriptivos y alineados al dominio del backend. Mantener el path existente de una capacidad ya especificada y no crear una capacidad nueva si el comportamiento pertenece a una que ya existe.
+
+`openspec/specs/` está vacío: todavía no hay capacidades especificadas, así que la primera propuesta define la primera. El nombre no se elige por comodidad técnica: describe comportamiento observable del dominio y usa los términos del lenguaje ubicuo del backend. Cómo se relaciona el nombre de una capacidad con los módulos del backend es una decisión abierta del equipo: no se resuelve por analogía.
 
 ### 3.4 Excepción documental
 
@@ -138,10 +159,10 @@ Solo los cambios sin efecto en comportamiento, contratos, esquema o código (typ
 
 - **Estructura condicional, no preventiva:** `app/`, `permissions/` y las subcarpetas de `components/` se crean cuando la funcionalidad lo exige. `App.tsx` y `main.tsx` conservan hoy la composición de rutas y providers; extraer `app/routes/`, `app/providers/` o `lib/query-client.ts` es un cambio propio con su aprobación, no una limpieza. No abrir las subcarpetas de una feature que todavía no las necesita.
 
-- **Componentes:** presentacional vs. contenedor. El presentacional recibe props y no conoce la API; el contenedor usa los hooks de la capacidad. Sin componentes de más de ~150 líneas: si crece, se parte por responsabilidad.
+- **Componentes:** presentacional vs. contenedor. El presentacional recibe props y no conoce la API; el contenedor usa los hooks de la capacidad. Sin componentes de más de ~150 líneas: si crece, se parte por responsabilidad. Los 150 son el objetivo de diseño; el lint recién advierte a las 200 (`max-lines`, sin contar líneas en blanco ni comentarios), así que pasarse no lo frena nada y sigue siendo señal de que hay que partir el componente.
 - **Nombres:** componentes y páginas en `PascalCase` (`PlanBuilderPage.tsx`), layouts en `PascalCase` + `Layout.tsx` (`StaffLayout.tsx`), hooks en `useCamelCase` (`usePlanes.ts`), esquemas con identificador `camelCase` + `Schema` (`planSchema`, `planFormSchema`) en archivo `<descriptivo>.schema.ts` (`plan.schema.ts`, `plan-form.schema.ts`), y archivos HTTP de feature `<capacidad>.service.ts` (`planes.service.ts`). Un archivo exporta un componente de React (`react/only-export-components`, activa).
 - **Formato:** Prettier (`singleQuote`, `trailingComma: all`, plugin de Tailwind) y oxlint. No introducir reglas nuevas de lint sin justificarlo.
-- **Lint y lo que no cubre:** `.oxlintrc.json` hace cumplir lo automatizable de estos acuerdos — ciclos de imports, un solo componente exportado por archivo, tamaño de archivo, `any` explícito, sufijo de los tests y `label` asociado a su control. No cubre los límites entre features (`estructura.md` §6): con imports relativos esos siguen siendo revisión de código. No desactivar reglas sin justificarlo en el mismo cambio.
+- **Lint y lo que no cubre:** `.oxlintrc.json` automatiza parte de estos acuerdos. Solo `import/no-cycle` y `react/rules-of-hooks` son `error`; el resto son `warn`: un solo componente exportado por archivo, tamaño de archivo, `any` explícito, sufijo de los tests y `label` asociado a su control. `yarn lint` sale con código 0 aunque haya warnings, así que esos avisos no frenan nada por sí solos: un warning nuevo es una observación a resolver, no ruido. No cubre los límites entre features (`estructura.md` §6): con imports relativos esos siguen siendo revisión de código. No desactivar reglas sin justificarlo en el mismo cambio.
 - **Dependencias entre carpetas:** `app/` y las páginas componen, los hooks consumen el `api/<capacidad>.service.ts` de su feature y los `components/` compartidos no conocen ninguna capacidad. No importar internals de otra feature (`features/planes/...` → `features/alumnos/...`): si la integración es legítima, exponer una API pública mínima de la feature o mover la pieza a un lugar realmente compartido, y justificarlo en el `design.md`. Sin dependencias circulares, sin acoplar features a un layout y sin `index.ts` obligatorios.
 
 ## 5. Acceso a datos y estado del servidor
@@ -188,7 +209,7 @@ Esto es **experiencia de usuario, no seguridad**: la autorización real la valid
   - HTML semántico primero; nunca un `div` con `onClick` donde corresponde un `button`.
   - Todo input con `label` asociado; los errores se enlazan con `aria-describedby` y marcan `aria-invalid`.
   - Foco visible y navegación completa por teclado.
-  - El atributo `lang` de `index.html` debe reflejar el idioma de la interfaz.
+  - El atributo `lang` de `index.html` es `es`: la interfaz se escribe en español y el atributo lo declara para lectores de pantalla, correctores y buscadores.
 
 ### 7.1 Diseño responsive por experiencia
 
@@ -204,7 +225,7 @@ Todas las pantallas deben funcionar y leerse en móvil y en escritorio. La prior
 - Para componentes que usan datos, envolver en un `QueryClientProvider` con un cliente de test (`retry: false`, sin `staleTime` heredado). No mockear TanStack Query.
 - HTTP: mockear en el borde con `vi.mock('./lib/api')` o `vi.spyOn(api, 'get')`. No levantar un servidor falso para un test unitario.
 - Todo cambio de comportamiento sigue test-first: primero un test que falla (RED), luego la implementación (GREEN), luego refactor. Cada test verifica todos los efectos observables de la regla.
-- **Antes de declarar terminada una tarea:** `yarn typecheck && yarn lint && yarn test`. Un cambio de estilos o de markup significativo suma `yarn format:check`.
+- **Antes de declarar terminada una tarea:** `yarn typecheck && yarn lint && yarn test`. Un cambio de estilos o de markup significativo suma `yarn format:check`. `yarn lint` sin salida no prueba nada por sí solo: el comando sale con código 0 aunque haya warnings, así que revisar que no aparezcan avisos nuevos.
 - **Ausencia inicial de tests ≠ fallo.** Mientras el repositorio no tenga archivos de prueba, `yarn test` termina con `No test files found, exiting with code 1`. Ese resultado se informa como ausencia inicial de tests, no como un fallo real; cuando la herramienta lo permita, `yarn test --passWithNoTests` permite distinguirlo en la salida. La excepción aplica solo a un repositorio sin tests: en cuanto existe el primer archivo de prueba, o cuando la funcionalidad implementada debía traerlos, el resultado se trata como cualquier otra verificación. Nunca habilita a omitir, desactivar, saltear ni posponer las pruebas de una funcionalidad implementada.
 - No desactivar ni saltear tests para "dejar todo en verde". Si un test falla por una causa preexistente, documentarlo con evidencia.
 - Toda verificación se ejecuta y se reporta con su resultado observado: no se afirma un resultado que no se ejecutó ni se declara "en verde" una suite que no llegó a correr.
