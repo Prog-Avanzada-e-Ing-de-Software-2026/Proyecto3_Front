@@ -185,6 +185,14 @@ Un PR debe permitir conocer **qué se cambió, por qué y cómo se verificó**, 
 
 <!-- Qué se modificó y qué queda fuera del alcance -->
 
+## Trazabilidad
+
+<!-- Obligatorio: lo consume el pipeline de métricas de hercfit-metrics -->
+
+HU: <!-- Número de la historia, solo el número -->
+
+Reglas: <!-- Identificadores de regla en formato RN-nn; "No aplica" si no implementa ninguna -->
+
 ## Validación y pruebas
 
 <!-- Comandos y resultados reales; lo no ejecutado y su motivo -->
