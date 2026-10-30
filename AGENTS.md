@@ -313,7 +313,7 @@ test(plans): cover duplicate exercise name
 - Revisar `git diff` completo antes de cada commit; no commitear archivos generados (`dist/`, `node_modules/`) ni secretos.
 - No usar `--no-verify` para saltear hooks.
 - El push, la creación de PR y el merge son decisiones del usuario.
-- **Trazabilidad en el PR:** todo PR declara en su sección *Trazabilidad* la historia que implementa (`HU: <n>`) y las reglas de negocio afectadas (`Reglas: RN-nn`). La línea `HU:` es la que permite calcular el Lead Time, que termina con el merge del PR a `develop`. La plantilla vive en `.github/pull_request_template.md` y en `buenas_practicas.md` §6.3.
+- **Trazabilidad en el PR:** todo PR declara en su sección *Trazabilidad* la historia que implementa (`HU: <n>`) y las reglas de negocio afectadas (`Reglas: RN-nn`). La línea `HU:` es la que permite calcular el Lead Time, que termina con el merge del PR a `develop`. La plantilla vive en el repositorio y en `buenas_practicas.md` §6.3.
 - Cuando el usuario pida una PR, el contenido sigue la plantilla de `buenas_practicas.md` §6.3.
 
 ## 11. CodeGraph
