@@ -115,7 +115,7 @@ Los nombres son ejemplos, no funcionalidades implementadas ni contratos confirma
 - Ejemplos válidos: `planes.service.ts`, `entrenamientos.service.ts`, `alumnos.service.ts`.
 - Ubicación preferida: `features/<capacidad>/api/<capacidad>.service.ts`.
 - La carpeta **permanece `api/`**. No crear paralelamente `services/` para las mismas llamadas.
-- Las funciones expuestas por el service deben ser explícitas: `getPlans`, `getPlanById`, `createPlan`, etc., usando los términos aprobados para el proyecto.
+- Las funciones expuestas por el service deben ser explícitas: `getPlans`, `getPlanById`, `createPlan`, etc., usando los términos aprobados para el proyecto (el idioma de cada nombre sigue la regla de §7).
 - El service utiliza la instancia `api` exportada desde `src/lib/api.ts`; **no crea una nueva instancia Axios por feature** salvo decisión aprobada.
 - No administra caché ni invalidaciones de TanStack Query; eso corresponde a `hooks/`.
 - No muestra alertas, no navega y no administra el estado del formulario.
@@ -234,19 +234,22 @@ app/layouts        components/*             features/*/api/*.service.ts
 
 ## 7. Nomenclatura
 
-| Tipo                          | Convención                                                  | Ejemplo                                 |
-| ----------------------------- | ----------------------------------------------------------- | --------------------------------------- |
-| Feature                       | kebab-case o término ya acordado en el repositorio          | `planes/`, `categorias-ejercicio/`      |
-| Página                        | PascalCase + `Page.tsx`                                     | `PlanesPage.tsx`                        |
-| Layout                        | PascalCase + `Layout.tsx`                                   | `StaffLayout.tsx`                       |
-| Componente                    | PascalCase                                                  | `PlanCard.tsx`                          |
-| Hook                          | `use` + PascalCase                                          | `usePlanes.ts`, `useCreatePlan.ts`      |
-| Servicio HTTP por feature     | **`<capacidad>.service.ts`**                                | **`planes.service.ts`**                 |
-| Schema                        | nombre descriptivo + `.schema.ts`                           | `plan.schema.ts`                        |
-| Tipos                         | `types.ts` o archivo de tipos concreto si crecen            | `types.ts`                              |
-| Prueba unitaria/de componente | junto al archivo probado, mismo nombre base + `.test.ts(x)` | `PlanForm.test.tsx` para `PlanForm.tsx` |
+| Tipo                          | Convención                                                  | Ejemplo                                        |
+| ----------------------------- | ----------------------------------------------------------- | ---------------------------------------------- |
+| Idioma del identificador      | acción técnica en inglés + término de dominio sin traducir  | `usePlanes`, `createPlan`, `planes.service.ts` |
+| Feature                       | kebab-case o término ya acordado en el repositorio          | `planes/`, `categorias-ejercicio/`             |
+| Página                        | PascalCase + `Page.tsx`                                     | `PlanesPage.tsx`                               |
+| Layout                        | PascalCase + `Layout.tsx`                                   | `StaffLayout.tsx`                              |
+| Componente                    | PascalCase                                                  | `PlanCard.tsx`                                 |
+| Hook                          | `use` + PascalCase                                          | `usePlanes.ts`, `useCreatePlan.ts`             |
+| Servicio HTTP por feature     | **`<capacidad>.service.ts`**                                | **`planes.service.ts`**                        |
+| Schema                        | nombre descriptivo + `.schema.ts`                           | `plan.schema.ts`                               |
+| Tipos                         | `types.ts` o archivo de tipos concreto si crecen            | `types.ts`                                     |
+| Prueba unitaria/de componente | junto al archivo probado, mismo nombre base + `.test.ts(x)` | `PlanForm.test.tsx` para `PlanForm.tsx`        |
 
 Los ejemplos usan terminología del proyecto. Mantener los términos de dominio y nombres ya fijados por el equipo; **no renombrar todo el repositorio para adecuarlo a un ejemplo**. En imports TypeScript de este proyecto ESM con bundler, seguir la convención de `AGENTS.md`: imports relativos sin `.js`.
+
+**Idioma de los identificadores.** La **acción técnica va en inglés** y el **término de dominio conserva el español** del lenguaje ubicuo: `usePlanes`, `createPlan`, `planes.service.ts`, `AlumnoLayout`. Los **campos del contrato** que expone el backend se copian verbatim en `types.ts` y en los `schemas/` —`fechaDesde`, `cantidadObjetivo`—: el service adapta la forma de los datos, no su vocabulario. El **texto visible de la interfaz** se escribe en español. La regla completa, con sus ejemplos y el criterio de renombrado, está en `AGENTS.md` §4.
 
 **Excepción importante:** `src/lib/api.ts` **no** se renombra a `api.service.ts`; configura el cliente Axios común. Renombrarlo solo porque contiene `.api` confundiría una infraestructura compartida con un service funcional.
 
