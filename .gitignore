@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local environment files (VITE_* values end up in the public bundle)
+.env
+
 # Yarn install state (generated)
 /.yarn/install-state.gz
 
