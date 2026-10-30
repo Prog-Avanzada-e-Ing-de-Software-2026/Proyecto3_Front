@@ -1,6 +1,6 @@
 # AGENTS.md — proyecto3_front
 
-Guía operativa para agentes de IA en este repositorio. La documentación y los artefactos de OpenSpec se escriben en español; el código, los identificadores técnicos y los mensajes de commit se escriben en inglés.
+Guía operativa para agentes de IA en este repositorio. La documentación y los artefactos de OpenSpec se escriben en español; los identificadores técnicos y los mensajes de commit se escriben en inglés. En el código, la acción va en inglés y el concepto de dominio conserva el español del lenguaje ubicuo (§4); el texto visible de la interfaz se escribe en español.
 
 ## 1. Contexto del proyecto
 
@@ -8,7 +8,7 @@ Frontend de una aplicación de gestión de gimnasio: los profesores arman planes
 
 El dominio no se define acá: la fuente de verdad son los documentos del backend, en el repositorio oficial `Prog-Avanzada-e-Ing-de-Software-2026/Proyecto3_Back` (`docs/dominio/`) y en los contratos aprobados del proyecto. Este frontend los consume; cuando una regla de negocio no está escrita, es una decisión abierta y no se inventa.
 
-Mantener el **lenguaje ubicuo** del dominio: no traducir ni renombrar sus términos en el código sin justificación.
+Mantener el **lenguaje ubicuo** del dominio: no traducir ni renombrar sus términos en el código sin justificación. El reparto concreto entre qué se escribe en inglés y qué conserva el español está en §4; renombrar un concepto del dominio se aprueba primero en la documentación de dominio del backend mediante un cambio de OpenSpec, nunca solo en el código.
 
 **Documentación de referencia.** Qué resuelve cada documento del repositorio:
 
@@ -160,6 +160,13 @@ Solo los cambios sin efecto en comportamiento, contratos, esquema o código (typ
 - **Estructura condicional, no preventiva:** `app/`, `permissions/` y las subcarpetas de `components/` se crean cuando la funcionalidad lo exige. `App.tsx` y `main.tsx` conservan hoy la composición de rutas y providers; extraer `app/routes/`, `app/providers/` o `lib/query-client.ts` es un cambio propio con su aprobación, no una limpieza. No abrir las subcarpetas de una feature que todavía no las necesita.
 
 - **Componentes:** presentacional vs. contenedor. El presentacional recibe props y no conoce la API; el contenedor usa los hooks de la capacidad. Sin componentes de más de ~150 líneas: si crece, se parte por responsabilidad. Los 150 son el objetivo de diseño; el lint recién advierte a las 200 (`max-lines`, sin contar líneas en blanco ni comentarios), así que pasarse no lo frena nada y sigue siendo señal de que hay que partir el componente.
+- **Idioma de los identificadores:** la **acción técnica va en inglés** y el **concepto de dominio conserva el español** del lenguaje ubicuo. El frontend no tiene comportamientos de dominio con nombre propio como el backend —acá no hay métodos de entidad—, así que la frontera es una sola: se traduce la operación, nunca el término del gimnasio.
+  - Acción técnica en inglés, sustantivo de dominio sin traducir: `usePlanes`, `useCreatePlan`, `getPlanById`, `createPlan`, `planes.service.ts`, `entrenamientos.service.ts`, `planSchema`, `AlumnoLayout`.
+  - Conceptos del dominio con la grafía del lenguaje ubicuo, también en carpetas y rutas de feature: `Plan`, `Entrenamiento`, `Alumno`, `Profesor`, `planes/`, `alumnos/`. No se renombran a `WorkoutPlan`, `Student` ni `Teacher`.
+  - Afijos y utilidades técnicas transversales en inglés: `Page`, `Layout`, `Schema`, `use`, `get`/`create`/`update`, `id`, `isLoading`, `data`, `error`, `onSubmit`.
+  - **Los campos del contrato conservan el nombre que expone el backend.** El service puede adaptar la forma —aplanar un anidado, derivar un valor, validar con Zod—, pero no traduce los conceptos: si la respuesta trae `fechaDesde`, `cantidadObjetivo` o `prescripcionesSemanales`, esos nombres se repiten en `types.ts`, en los `schemas/` y en la función de mapeo. Renombrarlos a `startDate` o `targetAmount` rompe la trazabilidad con el contrato y es un defecto, no una mejora.
+  - **El texto visible de la interfaz se escribe en español:** etiquetas, mensajes de error, estados vacíos y textos de accesibilidad (§7). Un identificador en inglés nunca se muestra al usuario.
+  - Los nombres ya fijados por el equipo no se renombran en masa: la convención rige el código nuevo y lo que se reescriba por otro motivo, igual que el resto de `estructura.md` §7.
 - **Nombres:** componentes y páginas en `PascalCase` (`PlanBuilderPage.tsx`), layouts en `PascalCase` + `Layout.tsx` (`StaffLayout.tsx`), hooks en `useCamelCase` (`usePlanes.ts`), esquemas con identificador `camelCase` + `Schema` (`planSchema`, `planFormSchema`) en archivo `<descriptivo>.schema.ts` (`plan.schema.ts`, `plan-form.schema.ts`), y archivos HTTP de feature `<capacidad>.service.ts` (`planes.service.ts`). Un archivo exporta un componente de React (`react/only-export-components`, activa).
 - **Formato:** Prettier (`singleQuote`, `trailingComma: all`, plugin de Tailwind) y oxlint. No introducir reglas nuevas de lint sin justificarlo.
 - **Lint y lo que no cubre:** `.oxlintrc.json` automatiza parte de estos acuerdos. Solo `import/no-cycle` y `react/rules-of-hooks` son `error`; el resto son `warn`: un solo componente exportado por archivo, tamaño de archivo, `any` explícito, sufijo de los tests y `label` asociado a su control. `yarn lint` sale con código 0 aunque haya warnings, así que esos avisos no frenan nada por sí solos: un warning nuevo es una observación a resolver, no ruido. No cubre los límites entre features (`estructura.md` §6): con imports relativos esos siguen siendo revisión de código. No desactivar reglas sin justificarlo en el mismo cambio.
