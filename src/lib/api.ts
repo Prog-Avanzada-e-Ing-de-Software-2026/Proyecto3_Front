@@ -2,11 +2,11 @@ import axios, { type AxiosRequestConfig } from 'axios';
 import { ApiError, toApiError } from './apiError';
 import { setupRefreshInterceptor } from './refreshInterceptor';
 
-const REQUEST_TIMEOUT_MS = 20_000;
-
+const REQUEST_TIMEOUT_MS = 10_000;
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? '/api',
+  // Si VITE_API_URL no está definida o está vacía, se utiliza el proxy /api. Un valor no vacío se usa tal cual.
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: REQUEST_TIMEOUT_MS,
   withCredentials: true, // el navegador guarda y envía la cookie de sesión
 });
@@ -19,7 +19,7 @@ export function setSessionExpiredHandler(handler: (() => void) | null): void {
 }
 
 // ---------------------------------------------------------------------------------------
-// Interceptor 1: renovar la sesión ante un 401-> El orden importa: este interceptor va primero porque necesita el error crudo de Axios. 
+// Interceptor 1: renovar la sesión ante un 401-> El orden importa: este interceptor va primero porque necesita el error crudo de Axios.
 setupRefreshInterceptor(instance, {
   refreshUrl: '/auth/refresh',
   skipUrls: ['/auth/login', '/auth/refresh', '/auth/logout'],
@@ -29,10 +29,10 @@ setupRefreshInterceptor(instance, {
 // Interceptor 2:`interceptors.response.use` recibe: manejo de respuestas exitosas  (undefined = dejarlas pasar tal cual), manejo de error (convertir a ApiError).
 instance.interceptors.response.use(undefined, (error: unknown) => {
   const apiError = toApiError(error);
-  if (import.meta.env.DEV && !(error instanceof ApiError)) console.error(apiError);
+  if (import.meta.env.DEV && !(error instanceof ApiError))
+    console.error(apiError);
   return Promise.reject(apiError); //vuelve a lanzar el error ya convertido, para que quien llamó (el service, TanStack Query) reciba un ApiError y no un AxiosError.
 });
-
 
 // `config` es opcional y lo pasa quien llama sólo cuando lo necesita; la mayoría de las llamadas no lo usa.
 /** Única puerta de salida HTTP. Devuelve directamente `data`, ya tipado. */

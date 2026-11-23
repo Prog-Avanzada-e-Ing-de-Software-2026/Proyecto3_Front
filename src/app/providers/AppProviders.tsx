@@ -9,9 +9,11 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60,
-      // El estado 0 indica que no llegó una respuesta HTTP.
+      // Reintentar solo los errores de conexión. Un tiempo de espera agotado ya consumió todo el presupuesto de la solicitud.
       retry: (failureCount, error) =>
-        failureCount < 2 && error instanceof ApiError && error.status === 0,
+        failureCount < 2 &&
+        error instanceof ApiError &&
+        error.kind === 'network',
       refetchOnWindowFocus: false,
     },
   },

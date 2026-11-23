@@ -94,7 +94,7 @@ en el puerto **5173** con `strictPort` y proxya `/api` hacia
 `/api/alumnos` llega al backend como `/api/alumnos`. Por eso el backend tiene que
 exponer sus rutas bajo `/api` (ver la advertencia al final de esta sección).
 
-La instancia Axios de `src/lib/api.ts` usa `VITE_API_URL` como `baseURL` y cae en
+El cliente HTTP de `src/lib/api.ts` configura su instancia Axios con `VITE_API_URL` como `baseURL` y cae en
 `/api` cuando la variable no está definida:
 
 ```ts
@@ -124,7 +124,7 @@ Para apuntar al backend desplegado desde tu máquina:
 VITE_API_URL=https://proyecto3-back.herokuapp.com/api
 ```
 
-Sin barra final, pero **con el prefijo `/api`**: la instancia Axios agrega solo la
+Incluí **el prefijo `/api`** y omití la barra final. El cliente HTTP agrega solo la
 ruta del service (`/alumnos`), así que el prefijo tiene que venir en la variable.
 
 > **CORS hoy:** el backend todavía no llama a `enableCors()` en `src/main.ts`. Por
@@ -231,7 +231,7 @@ src/
 ├── App.tsx            # composición raíz y rutas
 ├── index.css          # Tailwind (`@import 'tailwindcss'`)
 ├── lib/
-│   └── api.ts         # instancia única de Axios
+│   └── api.ts         # cliente HTTP compartido
 ├── assets/            # assets del template (no se usan en la aplicación)
 └── test/
     └── setup.ts       # setup de Vitest
@@ -252,7 +252,7 @@ src/
 │   └── types.ts               # tipos del contrato con la API
 ├── components/        # UI compartida: ui/, forms/, feedback/
 ├── permissions/       # helpers de visibilidad por permisos (solo UI)
-├── lib/api.ts         # instancia única de Axios (no es un service)
+├── lib/api.ts         # cliente HTTP compartido
 ├── App.tsx
 ├── main.tsx
 └── test/setup.ts

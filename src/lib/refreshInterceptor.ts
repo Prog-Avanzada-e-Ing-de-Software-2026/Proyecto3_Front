@@ -1,11 +1,17 @@
-import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import type {
+  AxiosError,
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+} from 'axios';
 
 // InternalAxiosRequestConfig es el tipo que usa Axios para la configuración de un request
 // (url, método, headers, body...). Axios no tiene un campo para "ya reintenté este request",
-// así que lo agregamos nosotros: `_retry` (el guion bajo indica que es de uso interno).
+// así que agregamos `sessionRetryAttempted`.
 // Sirve para reintentar cada request UNA sola vez: sin esa marca, si el reintento también
 // devolviera 401 se pediría otro refresh y otro reintento, en bucle infinito.
-type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
+type RetriableConfig = InternalAxiosRequestConfig & {
+  sessionRetryAttempted?: boolean;
+};
 
 interface RefreshOptions {
   refreshUrl: string;
@@ -46,12 +52,18 @@ export function setupRefreshInterceptor(
     const original = error.config as RetriableConfig | undefined;
 
     // Sólo nos interesa el 401. Cualquier otro error pasa de largo.
-    if (error.response?.status !== 401 || !original) return Promise.reject(error);
+    if (error.response?.status !== 401 || !original)
+      return Promise.reject(error);
 
     // No se refresca si ya se reintentó este request o si es una URL excluida.
-    if (original._retry || skipUrls.includes(original.url ?? '')) return Promise.reject(error);
+    if (
+      original.sessionRetryAttempted ||
+      skipUrls.includes(original.url ?? '')
+    ) {
+      return Promise.reject(error);
+    }
 
-    original._retry = true; // marca: este request ya tuvo su única oportunidad de reintento
+    original.sessionRetryAttempted = true;
 
     try {
       await refresh(); // espera a que la sesión se renueve (o se una al refresh en curso)

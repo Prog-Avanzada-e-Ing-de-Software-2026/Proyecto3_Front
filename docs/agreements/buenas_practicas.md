@@ -40,7 +40,7 @@ src/
 │       └── types.ts
 ├── components/                # UI genérica realmente compartida
 ├── lib/
-│   └── api.ts                 # Instancia Axios centralizada
+│   └── api.ts                 # Cliente HTTP compartido
 ├── permissions/               # Helpers de visibilidad, si hacen falta
 └── test/                      # Configuración y utilidades comunes de prueba
 ```

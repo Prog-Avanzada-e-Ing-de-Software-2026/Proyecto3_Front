@@ -1,7 +1,7 @@
 import { useCallback, useEffect, type ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { setSessionExpiredHandler } from '../../../lib/api';
-import { authService, setLoginSuccessHandler } from '../api/auth.service';
+import { authService } from '../api/auth.service';
 import type { SesionOtorgada } from '../auth.types';
 import { AuthContext } from './AuthContext';
 
@@ -38,15 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    // Registramos dos avisos: el login guarda el usuario y la expiración deja la sesión en null.
-    setLoginSuccessHandler(updateSession);
     setSessionExpiredHandler(() => updateSession(null));
-    // El return entrega la función sin ejecutarla. React la llama al desmontar
-    // o antes de volver a ejecutar el efecto, por ejemplo al verificarlo en StrictMode.
-    return () => {
-      setLoginSuccessHandler(null);
-      setSessionExpiredHandler(null);
-    };
+    return () => setSessionExpiredHandler(null);
   }, [updateSession]);
 
   return (
@@ -55,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: error ? null : (data ?? null),
         isLoading: isPending,
         error,
+        updateSession,
       }}
     >
       {children}

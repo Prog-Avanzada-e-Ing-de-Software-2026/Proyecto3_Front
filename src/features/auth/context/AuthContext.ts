@@ -5,10 +5,8 @@ interface AuthContextValue {
   user: SesionOtorgada | null;
   isLoading: boolean;
   error: Error | null;
+  updateSession: (session: SesionOtorgada | null) => void;
 }
 
-// El primer null (en <...>) le dice a TypeScript que el contexto admite null.
-// El segundo null (entre paréntesis) es lo que React entrega si no encuentra AuthProvider.
-// Con el provider presente, React entrega { user, isLoading, error }.
-// En ese objeto, user: null significa que todavía no hay un usuario disponible.
+// Sin AuthProvider, el contexto es null. Con el provider, user: null indica que no hay un usuario disponible.
 export const AuthContext = createContext<AuthContextValue | null>(null);
