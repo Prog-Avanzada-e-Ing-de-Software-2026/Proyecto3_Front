@@ -1,7 +1,7 @@
-import type { Permission } from './permissions';
+import type { Permission, UsuarioConPermisos } from './permissions';
 
 export function hasPermission(
-  user: { permisos: readonly string[] } | null,
+  user: UsuarioConPermisos | null,
   permission: Permission,
 ): boolean {
   return user?.permisos.includes(permission) ?? false;

@@ -1,1 +1,21 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-canvas: #121214;
+  --color-surface: #1e1f23;
+  --color-line: #34353a;
+  --color-cream: #f4f1ec;
+  --color-muted: #a6a39d;
+  --color-lime-accent: #c8f25c;
+}
+
+@layer base {
+  body {
+    color-scheme: dark;
+    @apply bg-canvas text-cream;
+  }
+
+  a:focus-visible {
+    @apply outline-2 outline-offset-2 outline-lime-accent;
+  }
+}
