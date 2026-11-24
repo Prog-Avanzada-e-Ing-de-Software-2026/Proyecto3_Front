@@ -22,29 +22,29 @@ context: |
 rules:
   proposal:
     - "Incluir una sección 'Fuera de alcance' explícita."
-    - "Vincular cada requisito a la regla de negocio (RN-n), user story (US-nn) o decisión (D-nn, DW-nn) del backend cuando exista."
-    - "Identificar los endpoints del backend que el cambio consume y qué ocurre mientras no existan."
-    - "No inventar comportamiento para decisiones abiertas del backend: registrarlas como supuestos o preguntas."
+    - 'Vincular cada requisito a la regla de negocio (RN-n), user story (US-nn) o decisión (D-nn, DW-nn) del backend cuando exista.'
+    - 'Identificar los endpoints del backend que el cambio consume y qué ocurre mientras no existan.'
+    - 'No inventar comportamiento para decisiones abiertas del backend: registrarlas como supuestos o preguntas.'
   specs:
-    - "Cada requisito debe usar SHALL o MUST y tener al menos un escenario Given/When/Then."
-    - "Especificar solo comportamiento observable en la interfaz, incluidos los estados de carga, vacío y error."
-    - "Usar los términos exactos del lenguaje ubicuo del dominio."
-    - "No especificar estructura de carpetas, nombres de componentes ni otros detalles de implementación."
+    - 'Cada requisito debe usar SHALL o MUST y tener al menos un escenario Given/When/Then.'
+    - 'Especificar solo comportamiento observable en la interfaz, incluidos los estados de carga, vacío y error.'
+    - 'Usar los términos exactos del lenguaje ubicuo del dominio.'
+    - 'No especificar estructura de carpetas, nombres de componentes ni otros detalles de implementación.'
   design:
-    - "Registrar la decisión, las alternativas descartadas y su justificación."
-    - "Indicar rutas, componentes, hooks de datos y contratos de API afectados."
-    - "Señalar riesgos, impacto en accesibilidad y estrategia de pruebas."
+    - 'Registrar la decisión, las alternativas descartadas y su justificación.'
+    - 'Indicar rutas, componentes, hooks de datos y contratos de API afectados.'
+    - 'Señalar riesgos, impacto en accesibilidad y estrategia de pruebas.'
   tasks:
-    - "Una tarea por unidad verificable, con su prueba asociada."
-    - "Ordenar por dependencias; ninguna tarea sin un requisito que la origine."
+    - 'Una tarea por unidad verificable, con su prueba asociada.'
+    - 'Ordenar por dependencias; ninguna tarea sin un requisito que la origine.'
 
 operations:
   apply:
     guidance:
-      - "Implementar en el orden de tasks.md y marcar cada tarea solo después de verificar su resultado."
-      - "Ejecutar yarn typecheck, yarn lint y yarn test antes de declarar una tarea terminada."
-      - "Si aparece alcance no especificado, detenerse y actualizar los artefactos antes de continuar."
+      - 'Implementar en el orden de tasks.md y marcar cada tarea solo después de verificar su resultado.'
+      - 'Ejecutar yarn typecheck, yarn lint y yarn test antes de declarar una tarea terminada.'
+      - 'Si aparece alcance no especificado, detenerse y actualizar los artefactos antes de continuar.'
   archive:
     guidance:
-      - "Archivar solo con todas las tareas completas y openspec validate --strict en verde."
-      - "Verificar que el delta se haya aplicado a openspec/specs/ y que la documentación afectada quede coherente."
+      - 'Archivar solo con todas las tareas completas y openspec validate --strict en verde.'
+      - 'Verificar que el delta se haya aplicado a openspec/specs/ y que la documentación afectada quede coherente.'

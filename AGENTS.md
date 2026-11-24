@@ -26,7 +26,7 @@ Antes de proponer o implementar cualquier pedido, leer [`docs/agreements/estruct
 
 - la organización **feature-first** y el árbol de carpetas de referencia (`app/`, `features/<capacidad>/`, `components/`, `lib/`, `permissions/`, `test/`);
 - qué debe y qué no debe contener cada carpeta (`estructura.md` §3), incluidas las variantes condicionales `app/layouts/`, `app/guards/` y `app/routes/`, que solo se crean cuando la funcionalidad lo necesita;
-- la convención **`api/<capacidad>.service.ts`** para el acceso HTTP de cada feature (`estructura.md` §3.1), manteniendo `src/lib/api.ts` como instancia Axios compartida;
+- la convención **`api/<capacidad>.service.ts`** para el acceso HTTP de cada feature (`estructura.md` §3.1), usando el cliente compartido de `src/lib/api.ts`;
 - el flujo de datos `Page → Hook → Feature Service → lib/api.ts` (`estructura.md` §4) y las dependencias permitidas entre carpetas (`estructura.md` §6);
 - la nomenclatura (`estructura.md` §7) y la correspondencia entre archivo probado y test unitario (`estructura.md` §8.1).
 
@@ -71,7 +71,7 @@ Es una guía de criterio, no una autorización: no habilita crear carpetas, refa
 
 ### 2.1 Entorno y API
 
-- `src/lib/api.ts` es la instancia Axios compartida: toma `baseURL` de `VITE_API_URL` y cae en `/api` cuando la variable no está definida.
+- `src/lib/api.ts` exporta el cliente HTTP compartido. Internamente usa una sola instancia Axios con `baseURL` configurada mediante `VITE_API_URL`.
 - La plantilla `env.example` se copia a `.env` (`cp env.example .env`) y documenta las variables. `.env` está ignorado por git: nunca se commitea.
 - El proxy de `yarn dev` reenvía `/api/*` a `http://localhost:3000/api/*` **conservando el prefijo**. Ese proxy vive solo en `vite.config.ts`: **no viaja al build de producción**.
 - Las variables `VITE_*` se incrustan en el bundle **en tiempo de build**: después de cambiarlas hay que volver a compilar, y nunca contienen secretos (ver §12). En Heroku son config vars del build: cambiarlas reinicia la dyno pero no reconstruye el slug.
@@ -151,7 +151,7 @@ Solo los cambios sin efecto en comportamiento, contratos, esquema o código (typ
       forms/                      # primitivas compartidas de formularios
       feedback/                   # carga, error, vacío, confirmaciones
     permissions/                  # helpers y componentes de visibilidad (condicional)
-    lib/api.ts                    # instancia única de axios (no es un service)
+    lib/api.ts                    # cliente HTTP compartido
     App.tsx                       # composición raíz
     main.tsx                      # providers globales (QueryClient, Router)
     test/setup.ts                 # setup de Vitest
@@ -176,7 +176,7 @@ Solo los cambios sin efecto en comportamiento, contratos, esquema o código (typ
 
 - **TanStack Query es la única fuente de estado del servidor.** No copiar respuestas de la API a `useState` ni a un store global; ese patrón duplica la verdad y desincroniza la caché.
 - `useState`/`useReducer` quedan para estado de interfaz (abrir/cerrar, filtros locales, pasos de un formulario).
-- **Toda llamada HTTP de una feature pasa por su `api/<capacidad>.service.ts` y de ahí por la instancia compartida `src/lib/api.ts`.** No usar `axios` ni `fetch` sueltos en páginas, layouts, hooks ni componentes.
+- **Toda llamada HTTP de una feature pasa por su `api/<capacidad>.service.ts` y de ahí por el cliente compartido de `src/lib/api.ts`.** No usar `axios` ni `fetch` sueltos en páginas, layouts, hooks ni componentes.
 - **Claves de query:** array que empieza por la capacidad y sigue con los parámetros reales. `['plans']`, `['plans', { studentId }]`, `['plans', planId]`. Sin claves ad-hoc por componente.
 - **Mutations:** invalidar en `onSuccess` las claves afectadas (`queryClient.invalidateQueries({ queryKey: ['plans'] })`). No actualizar la caché a mano salvo que el `design.md` del cambio lo justifique.
 - **Configuración global** en `src/main.tsx` (`staleTime` 60 s, `retry` 1, sin refetch al enfocar). No reconfigurar por componente sin justificación.
@@ -190,7 +190,7 @@ Solo los cambios sin efecto en comportamiento, contratos, esquema o código (typ
 
 - El service construye la petición y adapta el contrato con funciones explícitas (`getPlans`, `getPlanById`, `createPlan`), sin JSX, sin hooks, sin navegación, sin mensajes visuales ni estado de formulario.
 - No administra caché ni invalidaciones: eso corresponde a los `hooks/`.
-- Usa la instancia `api` de `src/lib/api.ts`; no crear una instancia Axios por feature sin decisión aprobada.
+- Usa el cliente `api` de `src/lib/api.ts`. Sus métodos devuelven directamente el cuerpo tipado de la respuesta. No crear una instancia Axios por feature sin decisión aprobada.
 - `src/lib/api.ts` conserva su nombre y **no** es un service de feature.
 - Devuelve valores y errores tipados según el contrato real: no inventar endpoints ni formas de respuesta.
 

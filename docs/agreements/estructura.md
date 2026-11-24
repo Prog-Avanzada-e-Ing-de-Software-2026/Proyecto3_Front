@@ -4,7 +4,7 @@
 >
 > **Alcance:** Proyecto 3, SPA React + Vite + TypeScript. Convención elaborada a partir de la estructura previamente acordada y contrastada con `Proyecto3_Front` (rama `main`, consultada el 27/10/2026). Los directorios de ejemplo **son una estructura objetivo**, no una afirmación de que ya existen.
 >
-> **Cambio expresamente acordado:** los archivos de acceso HTTP específicos de cada feature terminan en **`.service.ts`**, por ejemplo `features/planes/api/planes.service.ts` en lugar de `planes.api.ts`. **Se conserva el directorio `api/`** porque identifica la frontera de comunicación. `src/lib/api.ts` mantiene su nombre actual: contiene la instancia Axios compartida y **no** es un servicio de una feature.
+> **Cambio expresamente acordado:** los archivos de acceso HTTP específicos de cada feature terminan en **`.service.ts`**, por ejemplo `features/planes/api/planes.service.ts` en lugar de `planes.api.ts`. **Se conserva el directorio `api/`** porque identifica la frontera de comunicación. `src/lib/api.ts` exporta el cliente compartido y contiene la instancia Axios que usa internamente.
 
 ---
 
@@ -52,7 +52,7 @@ src/
 │   └── feedback/                         # Carga, error, vacío, confirmaciones
 │
 ├── lib/                                  # Clientes/configuración reutilizables
-│   └── api.ts                            # Instancia Axios compartida (ya existente)
+│   └── api.ts                            # Cliente HTTP compartido
 │
 ├── permissions/                          # Si se necesita visibilidad reutilizable por permisos
 │   ├── permissions.ts
@@ -116,7 +116,7 @@ Los nombres son ejemplos, no funcionalidades implementadas ni contratos confirma
 - Ubicación preferida: `features/<capacidad>/api/<capacidad>.service.ts`.
 - La carpeta **permanece `api/`**. No crear paralelamente `services/` para las mismas llamadas.
 - Las funciones expuestas por el service deben ser explícitas: `getPlans`, `getPlanById`, `createPlan`, etc., usando los términos aprobados para el proyecto (el idioma de cada nombre sigue la regla de §7).
-- El service utiliza la instancia `api` exportada desde `src/lib/api.ts`; **no crea una nueva instancia Axios por feature** salvo decisión aprobada.
+- El service utiliza el cliente `api` exportado desde `src/lib/api.ts`. Sus métodos devuelven directamente el cuerpo tipado de la respuesta. Cada feature usa la misma instancia Axios, salvo decisión aprobada.
 - No administra caché ni invalidaciones de TanStack Query; eso corresponde a `hooks/`.
 - No muestra alertas, no navega y no administra el estado del formulario.
 - Devuelve valores y errores tipados de acuerdo con el contrato real. No inventar endpoints ni formas de respuesta.
@@ -128,9 +128,8 @@ Los nombres son ejemplos, no funcionalidades implementadas ni contratos confirma
 import { api } from '../../../lib/api';
 import type { PlanResponse } from '../types';
 
-export async function getPlans(): Promise<PlanResponse[]> {
-  const { data } = await api.get<PlanResponse[]>('/planes');
-  return data;
+export function getPlans(): Promise<PlanResponse[]> {
+  return api.get<PlanResponse[]>('/planes');
 }
 ```
 
@@ -160,7 +159,7 @@ Formulario -> Schema Zod + React Hook Form
 
 Reglas:
 
-1. Toda petición de una feature pasa por su `*.service.ts` y la instancia central `src/lib/api.ts`; no llamar Axios/fetch directamente desde páginas, layouts o componentes.
+1. Toda petición de una feature pasa por su `*.service.ts` y el cliente compartido de `src/lib/api.ts`. Las páginas, layouts y componentes acceden a los datos mediante hooks.
 2. TanStack Query es la fuente de estado remoto: los hooks definen claves estables, manejan carga, error, éxito e invalidación. No duplicar respuestas remotas en `useState` ni en contextos globales.
 3. Estado local (`useState`, `useReducer`): modales, filtros locales, pestañas, pasos de formulario. Estado remoto: TanStack Query.
 4. `pages/` utiliza hooks y compone componentes; un componente de presentación recibe datos y callbacks por props cuando sea posible.
@@ -257,7 +256,7 @@ Los ejemplos usan terminología del proyecto. Mantener los términos de dominio 
 
 ## 8. Pruebas y calidad enfocadas en responsabilidades
 
-- **`*.service.ts`**: comprobar métodos, payloads, normalización y propagación de errores en la frontera HTTP, con mocks de la instancia Axios; no probar JSX allí.
+- **`*.service.ts`**: comprobar métodos, payloads, normalización y propagación de errores en la frontera HTTP, con mocks del cliente compartido `api`.
 - **Hooks**: comprobar que exponen estado remoto e invalidan caché correctamente cuando corresponda; configurar un `QueryClientProvider` aislado para pruebas.
 - **Componentes**: verificar interacción, semántica, carga, errores y estados vacíos con Vitest + Testing Library, preferentemente por roles y etiquetas accesibles.
 - **Páginas**: comprobar la integración de la UI con rutas y hooks según los escenarios aprobados, no acoplar pruebas a clases de Tailwind ni a detalles internos.

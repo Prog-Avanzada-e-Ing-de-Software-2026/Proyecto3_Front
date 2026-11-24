@@ -21,7 +21,10 @@
       "warn",
       { "max": 200, "skipBlankLines": true, "skipComments": true }
     ],
-    "vitest/consistent-test-filename": ["warn", { "pattern": ".*\\.test\\.(ts|tsx)$" }],
+    "vitest/consistent-test-filename": [
+      "warn",
+      { "pattern": ".*\\.test\\.(ts|tsx)$" }
+    ],
     "vitest/expect-expect": "warn",
     "vitest/no-disabled-tests": "warn",
     "jsx-a11y/label-has-associated-control": "warn"
