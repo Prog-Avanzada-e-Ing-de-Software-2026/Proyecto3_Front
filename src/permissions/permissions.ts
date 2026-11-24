@@ -2,3 +2,7 @@
 export const PERMISSIONS: readonly string[] = [];
 
 export type Permission = (typeof PERMISSIONS)[number];
+
+export interface UsuarioConPermisos {
+  permisos: readonly string[];
+}
